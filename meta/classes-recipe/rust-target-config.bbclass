@@ -19,27 +19,28 @@ def llvm_features_from_tune(d):
     mach_overrides = d.getVar('MACHINEOVERRIDES')
     mach_overrides = frozenset(mach_overrides.split(':'))
 
+    if target_is_armv7(d):
+        f.append('+v7')
+
     if 'vfpv4' in feat:
         f.append("+vfp4")
-    if 'vfpv3' in feat:
+    if 'vfpv3' in feat or 'vfpv3d16' in feat:
         f.append("+vfp3")
-    if 'vfpv3d16' in feat:
-        f.append("+d16")
-
     if 'vfpv2' in feat or 'vfp' in feat:
         f.append("+vfp2")
+    if 'vfpv3d16' in feat:
+        f.append("-d32")
 
     if 'neon' in feat:
         f.append("+neon")
+    else:
+        f.append("-neon")
 
     if 'mips32' in feat:
         f.append("+mips32")
 
     if 'mips32r2' in feat:
         f.append("+mips32r2")
-
-    if target_is_armv7(d):
-        f.append('+v7')
 
     if ('armv6' in mach_overrides) or ('armv6' in feat):
         f.append("+v6")
